@@ -18,7 +18,7 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; font-size: 90%; }  /* gentle global zoom-out from 16px → 14.4px base */
 
 body {
   font-family: var(--sans);
