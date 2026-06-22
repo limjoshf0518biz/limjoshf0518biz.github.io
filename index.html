@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Josh F. Lim — Portfolio</title>
+  <meta name="description" content="Josh F. Lim — Data, AI &amp; Strategy. Demand forecasting and category strategy for e-commerce." />
+
+  <!-- Fonts: serif display + clean sans (closest free pairing to McKinsey's Bower) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#hero" class="nav__brand">Josh&nbsp;F.&nbsp;Lim</a>
+      <nav class="nav__links">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="nav__toggle" id="navToggle" aria-label="Menu">☰</button>
+    </div>
+  </header>
+
+  <!-- ===== 1. HERO / ABOUT ===== -->
+  <section class="hero" id="hero">
+    <div class="hero__inner reveal">
+      <img class="hero__photo" src="assets/profile.jpg" alt="Josh F. Lim" onerror="this.style.background='#0a3d62';this.alt='';" />
+      <p class="hero__eyebrow">Portfolio</p>
+      <h1 class="hero__title">Josh F. Lim</h1>
+      <p class="hero__role">Data&nbsp;· AI&nbsp;· Strategy</p>
+    </div>
+  </section>
+
+  <section class="section section--about" id="about">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="kicker">01 — About</span>
+        <h2>Fluent in Tech, Grounded in Business.</h2>
+      </div>
+      <p class="lead reveal">
+        I'm a data-driven Business Analyst who turns data into business
+        outcomes. I pair analytics, AI, and automation with a strong foundation
+        in business — built across diverse roles and industries, from e-commerce
+        to telco. I uncover opportunities, automate what slows teams down, and
+        solve complex problems to drive measurable growth.
+      </p>
+
+      <div class="pillars">
+        <div class="pillar reveal">
+          <span class="pillar__num">Data</span>
+          <h3>Understand the business</h3>
+          <p>Reading the story behind the numbers to see what's really happening — and why it matters.</p>
+        </div>
+        <div class="pillar reveal">
+          <span class="pillar__num">AI</span>
+          <h3>Work on what matters</h3>
+          <p>Using AI to automate the repetitive work and sharpen analysis, freeing time for the decisions that move the needle.</p>
+        </div>
+        <div class="pillar reveal">
+          <span class="pillar__num">Strategy</span>
+          <h3>Move the business forward</h3>
+          <p>Turning insight into clear recommendations and commercial decisions that unlock growth and drive the business forward.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2. EXPERIENCE + SKILLS ===== -->
+  <section class="section section--exp" id="experience">
+    <div class="container exp__grid">
+
+      <div class="exp__main">
+        <div class="section__head reveal">
+          <span class="kicker">02 — Experience</span>
+          <h2>Where I've worked.</h2>
+        </div>
+
+        <ol class="timeline">
+          <li class="timeline__item reveal">
+            <span class="timeline__year">Sep 2024 — Present</span>
+            <h3>Category Management Analytics Associate</h3>
+            <p class="timeline__org">Shopee Philippines</p>
+            <p>Delivered commercial analytics initiatives across multiple categories, translating data into insight that grew revenue by up to 30%. Designed process improvements that cut manual effort by 80%.</p>
+          </li>
+          <li class="timeline__item reveal">
+            <span class="timeline__year">Aug 2022 — Sep 2024</span>
+            <h3>Management Consulting Analyst</h3>
+            <p class="timeline__org">Accenture Strategy &amp; Consulting</p>
+            <p>Worked across commercial and digital transformation projects for various clients — analyzing customer and pricing data to inform campaign strategy, and producing competitive analysis reports to sharpen market positioning. On the transformation side, ran data-pipeline analysis to remediate data-quality issues and delivered DAPI integration projects.</p>
+          </li>
+        </ol>
+      </div>
+
+      <aside class="exp__side reveal">
+        <span class="kicker">Skills &amp; Stack</span>
+
+        <div class="skill-group">
+          <h4 class="skill-group__label">Technical</h4>
+          <div class="skills">
+            <span class="tag">Excel</span>
+            <span class="tag">SQL</span>
+            <span class="tag">Python</span>
+            <span class="tag">Power BI</span>
+            <span class="tag">Claude</span>
+            <span class="tag">n8n</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <h4 class="skill-group__label">Business</h4>
+          <div class="skills">
+            <span class="tag">Marketing</span>
+            <span class="tag">Finance</span>
+            <span class="tag">Business Development</span>
+            <span class="tag">Operations</span>
+            <span class="tag">Project Management</span>
+            <span class="tag">Process Improvement</span>
+          </div>
+        </div>
+
+        <div class="edu">
+          <span class="kicker">Education</span>
+          <div class="edu__item">
+            <h4>Master of Business Administration</h4>
+            <p>Ateneo de Manila — Gold Medalist</p>
+          </div>
+          <div class="edu__item">
+            <h4>BS Health Sciences</h4>
+            <p>Ateneo de Manila University</p>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- ===== 3. PROJECTS (carousel) ===== -->
+  <section class="section section--projects" id="projects">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="kicker">03 — Projects</span>
+        <h2>Selected work.</h2>
+      </div>
+    </div>
+
+    <div class="carousel reveal">
+      <button class="carousel__btn carousel__btn--prev" id="prevBtn" aria-label="Previous">‹</button>
+
+      <div class="carousel__track" id="track">
+        <a class="card" href="case-study-data-analyst-ai.html">
+          <div class="card__img card__img--1" style="background-image:linear-gradient(rgba(0,0,51,0.42),rgba(0,0,51,0.55)),url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=80'); background-size:cover; background-position:center;"></div>
+          <div class="card__body">
+            <span class="card__tag">Analytics Engineering</span>
+            <h3>Data Analyst AI Agent</h3>
+            <p>A natural-language "ask your data" agent on BigQuery — made reliable not by a smarter model but by a clean single-table foundation and guardrails. View case study →</p>
+          </div>
+        </a>
+        <a class="card" href="case-study-sales-driver.html">
+          <div class="card__img card__img--2" style="background-image:linear-gradient(rgba(0,0,51,0.32),rgba(0,0,51,0.5)),url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80'); background-size:cover; background-position:center;"></div>
+          <div class="card__body">
+            <span class="card__tag">Sales Analytics</span>
+            <h3>Sales Driver Dashboard</h3>
+            <p>An interactive dashboard that turns a flat +2.3% topline into a clear map of which brands, regions and customers actually moved volume. View case study →</p>
+          </div>
+        </a>
+        <a class="card" href="case-study-marketing-analytics.html">
+          <div class="card__img card__img--3" style="background-image:linear-gradient(rgba(0,0,51,0.32),rgba(0,0,51,0.5)),url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80'); background-size:cover; background-position:center;"></div>
+          <div class="card__body">
+            <span class="card__tag">Marketing Analytics</span>
+            <h3>A/B Testing an Ad Campaign</h3>
+            <p>The new ad creative doubled click-through but drove no extra sales. A full-funnel significance test that stopped ~$20K in wasted ad spend. View case study →</p>
+          </div>
+        </a>
+      </div>
+
+      <button class="carousel__btn carousel__btn--next" id="nextBtn" aria-label="Next">›</button>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT / FOOTER ===== -->
+  <footer class="footer" id="contact">
+    <div class="container footer__inner reveal">
+      <h2>Let's work together.</h2>
+      <a class="footer__mail" href="mailto:lim.josh.f0518@gmail.com">lim.josh.f0518@gmail.com</a>
+      <div class="footer__links">
+        <a href="https://www.linkedin.com/in/joshflim/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="#" target="_blank" rel="noopener">Resume</a>
+      </div>
+      <p class="footer__copy">© <span id="year"></span> Josh F. Lim. Built for GitHub Pages.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

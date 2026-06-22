@@ -1,0 +1,40 @@
+/* ===== Case study page ===== */
+.cs-hero {
+  background: var(--navy); color: var(--white);
+  padding: clamp(56px, 9vw, 110px) 0 clamp(48px, 7vw, 80px);
+}
+.cs-back { display: block; color: rgba(255,255,255,0.65); text-decoration: none; font-size: 0.88rem; margin-bottom: 36px; letter-spacing: 0.03em; }
+.cs-back:hover { color: var(--blue); }
+.cs-hero h1 { font-size: clamp(2.2rem, 6vw, 4rem); color: var(--white); margin: 10px 0 20px; max-width: 14ch; }
+.cs-hero__sub { color: rgba(255,255,255,0.75); font-size: clamp(1.05rem, 2.4vw, 1.4rem); max-width: 60ch; font-family: var(--serif); line-height: 1.5; }
+
+.cs-meta { background: var(--paper); border-bottom: 1px solid var(--line); }
+.cs-meta__grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 28px 40px; padding-top: 38px; padding-bottom: 38px; }
+.cs-meta__grid > div { flex: 0 1 auto; }
+.cs-meta__grid span { display: block; text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.68rem; color: var(--blue); font-weight: 600; margin-bottom: 10px; }
+.cs-meta__grid p { color: var(--navy); font-weight: 600; font-size: 0.98rem; }
+
+.cs-body { max-width: 760px; padding-top: clamp(48px, 7vw, 88px); padding-bottom: clamp(48px, 7vw, 88px); }
+.cs-block { margin-bottom: clamp(36px, 5vw, 56px); }
+.cs-block h2 { font-size: clamp(1.5rem, 3.4vw, 2.1rem); color: var(--navy); margin-bottom: 14px; }
+.cs-block p { color: var(--ink); font-size: 1.08rem; }
+.cs-list { margin: 16px 0 0 20px; color: var(--ink); }
+.cs-list li { margin-bottom: 10px; }
+
+.cs-figure { height: clamp(220px, 38vw, 420px); background: linear-gradient(135deg, #000033, #1A1A4D); border-radius: 2px; margin-bottom: clamp(36px, 5vw, 56px); }
+.cs-figure--lead { background: linear-gradient(135deg, #1A1A4D, #73787C); }
+
+.cs-quote {
+  border-left: 3px solid var(--blue); padding: 8px 0 8px 28px; margin: 8px 0 clamp(36px, 5vw, 56px);
+  font-family: var(--serif); font-size: clamp(1.3rem, 3vw, 1.9rem); color: var(--navy); line-height: 1.4;
+}
+
+.cs-metrics { display: flex; flex-wrap: wrap; gap: 40px; margin-top: 24px; }
+.cs-metric strong { display: block; font-family: var(--serif); font-size: clamp(2rem, 5vw, 3rem); color: var(--blue); line-height: 1; }
+.cs-metric span { color: var(--grey); font-size: 0.9rem; }
+
+.cs-next { display: inline-block; margin-top: 12px; color: var(--navy); font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--blue); padding-bottom: 3px; }
+
+@media (max-width: 700px) {
+  .cs-meta__grid { grid-template-columns: repeat(2, 1fr); }
+}

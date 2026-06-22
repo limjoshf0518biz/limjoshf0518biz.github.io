@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Study — A/B Testing an Ad Campaign</title>
+  <meta name="description" content="A marketing A/B test pilot: the new ad creative doubled click-through rate, but full-funnel significance testing showed no sales gain — preventing a costly scale-up." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="case-study.css" />
+
+  <style>
+    .cs-chart { margin: 28px auto 10px; max-width: 600px; }
+    .cs-chart svg { width: 100%; height: auto; display: block; }
+    .cs-chart figcaption { color: var(--grey); font-size: 0.85rem; margin-top: 10px; text-align: center; }
+
+    /* lead photo */
+    .cs-figure--photo { background: var(--navy); background-size: cover; background-position: center; position: relative; }
+
+    /* metric hierarchy */
+    .cs-tier { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 22px 0; }
+    .cs-tier-card { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 18px; }
+    .cs-tier-card span { display: block; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.62rem; color: var(--blue); font-weight: 600; margin-bottom: 8px; }
+    .cs-tier-card h4 { color: var(--navy); font-size: 1rem; margin: 0 0 8px; }
+    .cs-tier-card ul { margin: 0 0 0 16px; color: var(--ink); font-size: 0.9rem; }
+    .cs-tier-card li { margin-bottom: 5px; }
+
+    /* tables */
+    .cs-table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 0.9rem; }
+    .cs-table th, .cs-table td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); }
+    .cs-table th { color: var(--navy); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.09em; }
+    .cs-table td.sig { color: var(--navy); font-weight: 600; }
+    .cs-table td.ns { color: var(--grey); }
+
+    .cs-callout { background: var(--paper); border-left: 3px solid var(--blue); padding: 16px 22px; margin: 22px 0; border-radius: 0 4px 4px 0; }
+    .cs-callout p { font-size: 1rem; color: var(--ink); margin: 0; }
+
+    .cs-block p { margin-bottom: 16px; }
+    .cs-block p:last-child { margin-bottom: 0; }
+    .cs-thesis { font-family: var(--serif); font-size: clamp(1.2rem, 2.6vw, 1.5rem); color: var(--navy); line-height: 1.45; margin: 0 0 clamp(32px, 5vw, 48px); }
+
+    /* normality slideshow */
+    .nq-carousel { max-width: 560px; margin: 24px auto 12px; }
+    .nq-slide { display: none; }
+    .nq-slide.active { display: block; }
+    .nq-slide h4 { color: var(--navy); font-size: 1rem; margin: 0 0 2px; text-align: center; }
+    .nq-verdict { text-align: center; font-size: 0.85rem; color: var(--grey); margin-bottom: 12px; }
+    .nq-verdict b { color: var(--navy); }
+    .nq-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .nq-panel { text-align: center; }
+    .nq-panel .lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue); font-weight: 600; margin-bottom: 4px; }
+    .nq-svg { width: 100%; height: auto; }
+    .nq-ax { stroke: var(--grey); stroke-width: 1; }
+    .nq-ref { stroke: var(--navy); stroke-width: 1.3; stroke-dasharray: 4 3; }
+    .nq-dot { fill: var(--navy); }
+    .nq-nav { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 14px; }
+    .nq-nav button { background: var(--navy); color: #fff; border: none; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans); }
+    .nq-count { color: var(--grey); font-size: 0.85rem; }
+
+    .cs-foot { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--grey); font-size: 0.82rem; }
+
+    .cs-code { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 18px; }
+    .cs-code summary { cursor: pointer; color: var(--navy); font-weight: 600; font-size: 0.98rem; list-style: none; }
+    .cs-code summary::before { content: "▸ "; color: var(--blue); }
+    .cs-code[open] summary::before { content: "▾ "; }
+    .cs-code pre { background: var(--navy); color: #E8E8F0; border-radius: 6px; padding: 22px; overflow-x: auto; font-size: 0.78rem; line-height: 1.55; margin-top: 18px; }
+
+    @media (max-width: 700px) { .cs-tier { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__brand">Josh&nbsp;F.&nbsp;Lim</a>
+      <nav class="nav__links">
+        <a href="index.html#about">About</a>
+        <a href="index.html#experience">Experience</a>
+        <a href="index.html#projects">Projects</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="cs-hero" style="background-image: linear-gradient(to right, rgba(0,0,51,0.94), rgba(0,0,51,0.55)), url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&amp;fit=crop&amp;w=1600&amp;q=80'); background-size: cover; background-position: center;">
+    <div class="container">
+      <a class="cs-back" href="index.html#projects">← Back to projects</a>
+      <span class="kicker">Case Study · Marketing Analytics</span>
+      <h1>More Clicks ≠ More Business</h1>
+      <p class="cs-hero__sub">A pilot A/B test of two ad campaigns. The new creative doubled click-through rate — but a full-funnel statistical analysis showed it drove no additional sales, preventing a costly scale-up.</p>
+    </div>
+  </section>
+
+  <section class="cs-meta">
+    <div class="container cs-meta__grid">
+      <div><span>Role</span><p>Marketing Analyst</p></div>
+      <div><span>Context</span><p>Marketing A/B test · pilot</p></div>
+      <div><span>Stack</span><p>Python · Claude</p></div>
+      <div><span>Impact</span><p>~$20K wasted spend prevented</p></div>
+    </div>
+  </section>
+
+  <article class="cs-body container">
+
+    <div class="cs-figure cs-figure--photo" style="background-image:linear-gradient(rgba(0,0,51,0.35),rgba(0,0,51,0.35)),url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80');"></div>
+
+    <p class="cs-thesis">A statistical test is only useful when it changes a business decision. Here, the right tests turned a tempting "ship it" into a defensible hold — stopping a planned ~$20K scale-up before the money was committed.</p>
+
+    <!-- ============ 1. PROBLEM ============ -->
+    <section class="cs-block">
+      <h2>The problem</h2>
+      <p>A retailer ran a <strong>one-month pilot</strong> of a new ad creative against its existing one. The new "Test" campaign was winning clicks — and the plan was to scale it across the full budget.</p>
+      <p>But clicks aren't the goal; <strong>customers</strong> are. The real question: Does the new campaign drive more business, or just win the eye-catching metric? This analysis tests every stage of the funnel — and counts a win only if it's both <em>statistically real</em> and <em>commercially meaningful</em>.</p>
+    </section>
+
+    <!-- ============ 2. METHODOLOGY ============ -->
+    <section class="cs-block">
+      <h2>The approach</h2>
+      <p>The two campaigns were treated as independent samples and compared across every funnel metric. But first I set a <strong>metric hierarchy</strong> — so the go/no-go decision rested on commercial outcomes, not on whichever number happened to look good.</p>
+
+      <div class="cs-tier">
+        <div class="cs-tier-card">
+          <span>Primary · commercial</span>
+          <h4>Revenue figures</h4>
+          <ul>
+            <li># Purchases</li>
+            <li># Add to Cart</li>
+            <li>Conversion rate</li>
+          </ul>
+        </div>
+        <div class="cs-tier-card">
+          <span>Secondary · diagnostic</span>
+          <h4>Traffic metrics</h4>
+          <ul>
+            <li>CTR &amp; # Clicks</li>
+            <li># Searches</li>
+            <li># View Content</li>
+          </ul>
+        </div>
+        <div class="cs-tier-card">
+          <span>Guardrail · efficiency</span>
+          <h4>Cost efficiency</h4>
+          <ul>
+            <li>CPA (cost per acquisition)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 style="font-size:1.25rem; margin-top:36px;">Step 1 — Test each variable for normality</h2>
+      <p>For every numeric metric I ran a Shapiro-Wilk test and a Q-Q plot, on Control and Test separately. <strong>The rule: If both groups are normal, use the parametric test (Welch's t); if even one isn't, drop to the non-parametric test (Mann-Whitney).</strong> Proportions like CTR and conversion skip this step — normality is irrelevant for a rate.</p>
+
+      <!-- ===== normality slideshow ===== -->
+      <div class="nq-carousel">
+        <!-- slide 1 -->
+        <div class="nq-slide active">
+          <h4># of Website Clicks</h4>
+          <p class="nq-verdict">Control normal, Test not → <b>Mann-Whitney U</b></p>
+          <div class="nq-pair">
+            <div class="nq-panel"><div class="lbl">Control · p=0.30 (normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="106" r="2.6"/><circle cx="58" cy="94" r="2.6"/><circle cx="76" cy="82" r="2.6"/><circle cx="92" cy="70" r="2.6"/><circle cx="108" cy="58" r="2.6"/><circle cx="124" cy="46" r="2.6"/><circle cx="142" cy="32" r="2.6"/></g></svg>
+            </div>
+            <div class="nq-panel"><div class="lbl">Test · p=0.01 (not normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="112" r="2.6"/><circle cx="58" cy="104" r="2.6"/><circle cx="76" cy="94" r="2.6"/><circle cx="92" cy="80" r="2.6"/><circle cx="108" cy="60" r="2.6"/><circle cx="124" cy="40" r="2.6"/><circle cx="142" cy="26" r="2.6"/></g></svg>
+            </div>
+          </div>
+        </div>
+        <!-- slide 2 -->
+        <div class="nq-slide">
+          <h4># of Searches</h4>
+          <p class="nq-verdict">Neither normal → <b>Mann-Whitney U</b></p>
+          <div class="nq-pair">
+            <div class="nq-panel"><div class="lbl">Control · p=0.05 (not normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="111" r="2.6"/><circle cx="58" cy="103" r="2.6"/><circle cx="76" cy="93" r="2.6"/><circle cx="92" cy="79" r="2.6"/><circle cx="108" cy="61" r="2.6"/><circle cx="124" cy="42" r="2.6"/><circle cx="142" cy="27" r="2.6"/></g></svg>
+            </div>
+            <div class="nq-panel"><div class="lbl">Test · p=0.01 (not normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="113" r="2.6"/><circle cx="58" cy="105" r="2.6"/><circle cx="76" cy="95" r="2.6"/><circle cx="92" cy="81" r="2.6"/><circle cx="108" cy="59" r="2.6"/><circle cx="124" cy="39" r="2.6"/><circle cx="142" cy="25" r="2.6"/></g></svg>
+            </div>
+          </div>
+        </div>
+        <!-- slide 3 -->
+        <div class="nq-slide">
+          <h4># of View Content</h4>
+          <p class="nq-verdict">Both normal → <b>Welch's t-test</b> ✓</p>
+          <div class="nq-pair">
+            <div class="nq-panel"><div class="lbl">Control · p=0.07 (normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="106" r="2.6"/><circle cx="58" cy="95" r="2.6"/><circle cx="76" cy="83" r="2.6"/><circle cx="92" cy="69" r="2.6"/><circle cx="108" cy="59" r="2.6"/><circle cx="124" cy="45" r="2.6"/><circle cx="142" cy="31" r="2.6"/></g></svg>
+            </div>
+            <div class="nq-panel"><div class="lbl">Test · p=0.09 (normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="105" r="2.6"/><circle cx="58" cy="93" r="2.6"/><circle cx="76" cy="84" r="2.6"/><circle cx="92" cy="71" r="2.6"/><circle cx="108" cy="57" r="2.6"/><circle cx="124" cy="47" r="2.6"/><circle cx="142" cy="33" r="2.6"/></g></svg>
+            </div>
+          </div>
+        </div>
+        <!-- slide 4 -->
+        <div class="nq-slide">
+          <h4># of Add to Cart</h4>
+          <p class="nq-verdict">Control normal, Test not → <b>Mann-Whitney U</b></p>
+          <div class="nq-pair">
+            <div class="nq-panel"><div class="lbl">Control · p=0.25 (normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="107" r="2.6"/><circle cx="58" cy="94" r="2.6"/><circle cx="76" cy="81" r="2.6"/><circle cx="92" cy="70" r="2.6"/><circle cx="108" cy="58" r="2.6"/><circle cx="124" cy="46" r="2.6"/><circle cx="142" cy="32" r="2.6"/></g></svg>
+            </div>
+            <div class="nq-panel"><div class="lbl">Test · p=0.03 (not normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="112" r="2.6"/><circle cx="58" cy="104" r="2.6"/><circle cx="76" cy="95" r="2.6"/><circle cx="92" cy="80" r="2.6"/><circle cx="108" cy="60" r="2.6"/><circle cx="124" cy="41" r="2.6"/><circle cx="142" cy="27" r="2.6"/></g></svg>
+            </div>
+          </div>
+        </div>
+        <!-- slide 5 -->
+        <div class="nq-slide">
+          <h4># of Purchase</h4>
+          <p class="nq-verdict">Control normal, Test not → <b>Mann-Whitney U</b></p>
+          <div class="nq-pair">
+            <div class="nq-panel"><div class="lbl">Control · p=0.09 (normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="106" r="2.6"/><circle cx="58" cy="95" r="2.6"/><circle cx="76" cy="82" r="2.6"/><circle cx="92" cy="71" r="2.6"/><circle cx="108" cy="58" r="2.6"/><circle cx="124" cy="45" r="2.6"/><circle cx="142" cy="32" r="2.6"/></g></svg>
+            </div>
+            <div class="nq-panel"><div class="lbl">Test · p=0.02 (not normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="113" r="2.6"/><circle cx="58" cy="105" r="2.6"/><circle cx="76" cy="94" r="2.6"/><circle cx="92" cy="79" r="2.6"/><circle cx="108" cy="61" r="2.6"/><circle cx="124" cy="40" r="2.6"/><circle cx="142" cy="26" r="2.6"/></g></svg>
+            </div>
+          </div>
+        </div>
+        <!-- slide 6 -->
+        <div class="nq-slide">
+          <h4>CPA</h4>
+          <p class="nq-verdict">Right-skewed cost, neither normal → <b>Mann-Whitney U</b></p>
+          <div class="nq-pair">
+            <div class="nq-panel"><div class="lbl">Control · p=0.02 (not normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="114" r="2.6"/><circle cx="58" cy="107" r="2.6"/><circle cx="76" cy="98" r="2.6"/><circle cx="92" cy="84" r="2.6"/><circle cx="108" cy="62" r="2.6"/><circle cx="124" cy="40" r="2.6"/><circle cx="142" cy="24" r="2.6"/></g></svg>
+            </div>
+            <div class="nq-panel"><div class="lbl">Test · p=0.01 (not normal)</div>
+              <svg viewBox="0 0 170 140" class="nq-svg"><line class="nq-ax" x1="22" y1="118" x2="155" y2="118"/><line class="nq-ax" x1="22" y1="20" x2="22" y2="118"/><line class="nq-ref" x1="34" y1="110" x2="150" y2="28"/><g class="nq-dot"><circle cx="40" cy="115" r="2.6"/><circle cx="58" cy="108" r="2.6"/><circle cx="76" cy="99" r="2.6"/><circle cx="92" cy="85" r="2.6"/><circle cx="108" cy="61" r="2.6"/><circle cx="124" cy="39" r="2.6"/><circle cx="142" cy="23" r="2.6"/></g></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="nq-nav">
+          <button id="nq-prev" aria-label="Previous">‹ Prev</button>
+          <span class="nq-count" id="nq-count">1 / 6</span>
+          <button id="nq-next" aria-label="Next">Next ›</button>
+        </div>
+      </div>
+      <p class="cs-chart" style="text-align:center; color:var(--grey); font-size:0.82rem; max-width:560px;">Q-Q plots per variable. On the line = normal; bowing off = not normal. View Content is the only metric normal in both groups.</p>
+
+      <h2 style="font-size:1.25rem; margin-top:36px;">Step 2 — Match the test to each variable</h2>
+      <p>The test follows the <strong>form of the data</strong>, not the metric's name. Each variable was classified by type and distribution, then routed to the test its structure demands:</p>
+
+      <table class="cs-table">
+        <thead><tr><th>Variable</th><th>Data type</th><th>Distribution</th><th>Approach</th><th>Test</th></tr></thead>
+        <tbody>
+          <tr><td>CTR</td><td>Proportion (rate)</td><td>n/a — CLT</td><td>—</td><td>Two-proportion z-test</td></tr>
+          <tr><td>Conversion rate</td><td>Proportion (rate)</td><td>n/a — CLT</td><td>—</td><td>Two-proportion z-test</td></tr>
+          <tr><td># View Content</td><td>Count</td><td>Normal (both)</td><td>Parametric</td><td>Welch's t-test</td></tr>
+          <tr><td># Website Clicks</td><td>Count</td><td>Non-normal</td><td>Non-parametric</td><td>Mann-Whitney U</td></tr>
+          <tr><td># Searches</td><td>Count</td><td>Non-normal</td><td>Non-parametric</td><td>Mann-Whitney U</td></tr>
+          <tr><td># Add to Cart</td><td>Count</td><td>Non-normal</td><td>Non-parametric</td><td>Mann-Whitney U</td></tr>
+          <tr><td># Purchase</td><td>Count</td><td>Non-normal</td><td>Non-parametric</td><td>Mann-Whitney U</td></tr>
+          <tr><td>CPA</td><td>Continuous (cost)</td><td>Right-skewed</td><td>Non-parametric</td><td>Mann-Whitney U</td></tr>
+        </tbody>
+      </table>
+      <p>Proportions are pooled across all impressions, so the test draws on hundreds of thousands of trials for maximum power. Independence of the daily series was confirmed (Ljung-Box), and all tests were two-tailed.</p>
+
+      <div class="cs-callout">
+        <p><strong>Why the right test matters commercially:</strong> Had I run a t-test on every metric and skipped the checks, a metric <em>could</em> have flagged "significant" by chance — making the campaign look like a winner it isn't. Acting on a false positive means scaling it and spending more for no return. Matching the test to each variable is what keeps a possible false win from becoming a real cost.</p>
+      </div>
+
+      <h2 style="font-size:1.25rem; margin-top:36px;">How AI shaped the work</h2>
+      <p>I used <strong>Claude</strong> as an analytical thinking partner — not just a faster way to write code. Its highest-value contributions were about <em>method and judgment</em>:</p>
+      <ul class="cs-list">
+        <li><strong>Test selection</strong> — classifying each variable's data form and routing it to the correct test, then building the decision table above.</li>
+        <li><strong>Reading stats against the commercial figures</strong> — holding each statistical result next to the movement of the revenue metrics (purchases, conversion), so a flashy traffic number never gets mistaken for a business result.</li>
+        <li><strong>Independent verification</strong> — recomputing the headline figures from the raw data to confirm they were correct and internally consistent.</li>
+      </ul>
+      <div class="cs-callout">
+        <p><strong>Where AI helps beyond speed:</strong> The biggest gain wasn't faster code — it was a reasoning reviewer that pressure-tested whether the right method was used, whether assumptions held, and whether the conclusion was honest. Used this way, AI is an always-on analytics mentor and devil's advocate, not an autocomplete.</p>
+      </div>
+    </section>
+
+    <!-- ============ 3. OUTCOME ============ -->
+    <section class="cs-block">
+      <h2>The outcome</h2>
+      <p>One chart tells the story. Every metric is shown as its lift (Test vs. Control); navy bars are statistically significant, grey are not.</p>
+
+      <figure class="cs-chart">
+        <svg viewBox="0 0 680 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lift by metric, Test vs Control">
+          <style>
+            .lf-ink { fill: var(--ink); } .lf-sub { fill: var(--grey); }
+            .lf-sig { fill: var(--navy); } .lf-ns { fill: #C9CCCF; }
+            .lf-zero { stroke: var(--ink); stroke-width: 1.4; }
+            .lf-b { font-family: var(--sans); font-weight: 700; }
+            .lf-r { font-family: var(--sans); }
+          </style>
+          <text class="lf-ink lf-b" x="20" y="26" font-size="15">Test won clicks — but lost where it counts</text>
+          <text class="lf-sub lf-r" x="20" y="44" font-size="10.5">Relative lift, Test vs Control · navy = statistically significant</text>
+          <line class="lf-zero" x1="340" y1="70" x2="340" y2="392"/>
+          <text class="lf-sub lf-r" x="340" y="408" font-size="9" text-anchor="middle">0%</text>
+          <text class="lf-sub lf-r" x="520" y="408" font-size="9" text-anchor="middle">+50%</text>
+          <text class="lf-sub lf-r" x="232" y="408" font-size="9" text-anchor="middle">−30%</text>
+          <text class="lf-ink lf-r" x="172" y="92" font-size="11" text-anchor="end">CTR</text>
+          <rect class="lf-sig" x="340" y="76" width="238" height="22"/>
+          <text class="lf-ink lf-b" x="584" y="92" font-size="10.5">+66% ***</text>
+          <text class="lf-ink lf-r" x="172" y="128" font-size="11" text-anchor="end"># Clicks</text>
+          <rect class="lf-ns" x="340" y="112" width="72" height="22"/>
+          <text class="lf-sub lf-r" x="418" y="128" font-size="10.5">+20% ns</text>
+          <text class="lf-ink lf-r" x="172" y="164" font-size="11" text-anchor="end">CPA</text>
+          <rect class="lf-ns" x="340" y="148" width="36" height="22"/>
+          <text class="lf-sub lf-r" x="382" y="164" font-size="10.5">+10% ns</text>
+          <text class="lf-ink lf-r" x="172" y="200" font-size="11" text-anchor="end"># Searches</text>
+          <rect class="lf-ns" x="340" y="184" width="3" height="22"/>
+          <text class="lf-sub lf-r" x="349" y="200" font-size="10.5">+0.2% ns</text>
+          <text class="lf-ink lf-r" x="172" y="236" font-size="11" text-anchor="end"># Purchase</text>
+          <rect class="lf-ns" x="337" y="220" width="3" height="22"/>
+          <text class="lf-sub lf-r" x="331" y="236" font-size="10.5" text-anchor="end">−0.2% ns</text>
+          <text class="lf-ink lf-r" x="172" y="272" font-size="11" text-anchor="end"># View Content</text>
+          <rect class="lf-ns" x="326" y="256" width="14" height="22"/>
+          <text class="lf-sub lf-r" x="320" y="272" font-size="10.5" text-anchor="end">−4% ns</text>
+          <text class="lf-ink lf-r" x="172" y="308" font-size="11" text-anchor="end">Conversion</text>
+          <rect class="lf-sig" x="297" y="292" width="43" height="22"/>
+          <text class="lf-ink lf-b" x="291" y="308" font-size="10.5" text-anchor="end">−12% ***</text>
+          <text class="lf-ink lf-r" x="172" y="344" font-size="11" text-anchor="end"># Add to Cart</text>
+          <rect class="lf-sig" x="243" y="328" width="97" height="22"/>
+          <text class="lf-ink lf-b" x="237" y="344" font-size="10.5" text-anchor="end">−27% ***</text>
+          <text class="lf-sub lf-r" x="20" y="424" font-size="8.5">*** p &lt; 0.001 · ns = not significant · z-test (rates), Welch's t (View), Mann-Whitney (counts/CPA)</text>
+        </svg>
+        <figcaption>Lift by metric, Test vs Control. The only significant win is top-of-funnel (CTR); both significant commercial metrics — conversion and add-to-cart — moved against Test.</figcaption>
+      </figure>
+
+      <table class="cs-table">
+        <thead><tr><th>Metric</th><th>Control</th><th>Test</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>CTR</td><td>4.86%</td><td>8.09%</td><td class="sig">+3.23 pp · significant</td></tr>
+          <tr><td>Conversion rate</td><td>9.83%</td><td>8.64%</td><td class="sig">−1.18 pp · significant</td></tr>
+          <tr><td># Add to Cart (median)</td><td>1,339</td><td>974</td><td class="sig">−27% · significant</td></tr>
+          <tr><td># Website Clicks (median)</td><td>5,224</td><td>6,243</td><td class="ns">no difference</td></tr>
+          <tr><td># Searches (median)</td><td>2,390</td><td>2,396</td><td class="ns">no difference</td></tr>
+          <tr><td># View Content (mean)</td><td>1,944</td><td>1,858</td><td class="ns">no difference</td></tr>
+          <tr><td># Purchase (median)</td><td>501</td><td>500</td><td class="ns">no difference</td></tr>
+          <tr><td>CPA (median)</td><td>$4.62</td><td>$5.06</td><td class="ns">no difference</td></tr>
+        </tbody>
+      </table>
+
+      <p>The funnel reads cleanly: Test <strong>got more clicks but the same number of purchases</strong> — so its conversion rate is significantly <em>lower</em>, and add-to-cart dropped 27%. The new creative pulled in <strong>more clicks but lower-intent visitors</strong> — people who browse and bounce, not buy. The fix isn't to scale it; it's to <strong>retarget that traffic</strong> and tighten the audience before spending more.</p>
+
+      <h2 style="font-size:1.25rem; margin-top:34px;">Financial implication</h2>
+      <p>On the strength of its click numbers, the team was ready to scale the Test creative — a <strong>planned ~$20K increase in spend</strong> behind it. The pilot's full-funnel verdict changed that call before the money was committed.</p>
+      <p>Because Test won more clicks but converted them at a <strong>significantly lower rate</strong>, that extra ~$20K would have bought more traffic without more sales. So the first move was to <strong>stop the scale-up</strong> — then redirect the budget to <strong>retarget Test's traffic</strong>, where its lower-intent visitors could be converted instead of just paid for.</p>
+
+      <div class="cs-metrics">
+        <div class="cs-metric"><strong>+66%</strong><span>CTR lift (significant)</span></div>
+        <div class="cs-metric"><strong>−12%</strong><span>conversion rate (significant)</span></div>
+        <div class="cs-metric"><strong>~$20K</strong><span>wasted spend prevented</span></div>
+      </div>
+    </section>
+
+    <blockquote class="cs-quote">
+      A doubled click-through rate is not a business case. The new campaign produced no additional sales and a significantly worse conversion rate — so the recommendation was to hold it, not scale it.
+    </blockquote>
+
+    <section class="cs-block">
+      <h2>Reflection</h2>
+      <p>The discipline that mattered: A metric going up is not, by itself, a win. Reading the entire funnel — not just the flashy top-line metric — turned an obvious "ship it" into a defensible "hold." The most valuable output of an analysis isn't the p-value; it's the judgment to separate a real, meaningful effect from a flattering one, and to translate it into the commercial decision it implies.</p>
+    </section>
+
+    <p class="cs-foot">Note: One Control day was dropped for a missing value during cleaning (Control, 29 valid days; Test, 30). As all comparisons use rates, medians, or means — and the tests handle unequal sample sizes — this does not bias the results.</p>
+
+    <!-- ============ 4. FULL ANALYSIS LINK ============ -->
+    <div class="cs-code">
+      <p style="margin-bottom:12px; color:var(--ink);">The full notebook — cleaning, normality checks, every test, and the charts — is on Kaggle.</p>
+      <a class="cs-next" href="https://www.kaggle.com/code/joshnathanielflim/a-b-testing-project" target="_blank" rel="noopener">View the full analysis &amp; code on Kaggle →</a>
+    </div>
+
+    <a class="cs-next" href="index.html#projects">View more projects →</a>
+  </article>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <h2>Let's work together.</h2>
+      <a class="footer__mail" href="mailto:lim.josh.f0518@gmail.com">lim.josh.f0518@gmail.com</a>
+      <p class="footer__copy">© <span id="year"></span> Josh F. Lim.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    (function () {
+      const slides = Array.prototype.slice.call(document.querySelectorAll('.nq-slide'));
+      const count = document.getElementById('nq-count');
+      let i = 0;
+      function show(n) {
+        slides[i].classList.remove('active');
+        i = (n + slides.length) % slides.length;
+        slides[i].classList.add('active');
+        count.textContent = (i + 1) + ' / ' + slides.length;
+      }
+      document.getElementById('nq-prev').onclick = function () { show(i - 1); };
+      document.getElementById('nq-next').onclick = function () { show(i + 1); };
+    })();
+  </script>
+</body>
+</html>

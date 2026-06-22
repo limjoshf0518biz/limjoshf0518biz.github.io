@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Study — Process Automation &amp; Rebating Revamp</title>
+  <meta name="description" content="Case study: rebuilding the commercial systems behind seller rebates at Shopee — automated logic that cut manual effort by 80% and made every payout traceable." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="case-study.css" />
+</head>
+<body>
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__brand">Josh&nbsp;F.&nbsp;Lim</a>
+      <nav class="nav__links">
+        <a href="index.html#about">About</a>
+        <a href="index.html#experience">Experience</a>
+        <a href="index.html#projects">Projects</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="cs-hero">
+    <div class="container">
+      <a class="cs-back" href="index.html#projects">← Back to projects</a>
+      <span class="kicker">Case Study · AI &amp; Automation</span>
+      <h1>Process Automation &amp; Rebating Revamp</h1>
+      <p class="cs-hero__sub">Rebuilt the commercial systems behind seller rebates — replacing slow, error-prone manual work with automated, auditable logic that cut effort by 80% and made every payout traceable.</p>
+    </div>
+  </section>
+
+  <section class="cs-meta">
+    <div class="container cs-meta__grid">
+      <div><span>Role</span><p>Category Management — Planning &amp; Analytics</p></div>
+      <div><span>Context</span><p>Shopee Philippines</p></div>
+      <div><span>Stack</span><p>SQL · Excel / VBA · [tool]</p></div>
+      <div><span>Impact</span><p>80% less manual effort</p></div>
+    </div>
+  </section>
+
+  <article class="cs-body container">
+
+    <div class="cs-figure cs-figure--lead"></div>
+
+    <section class="cs-block">
+      <h2>The problem</h2>
+      <p>Rebating ran on manual labor. Every cycle, the team rebuilt the same calculations by hand — pulling data from multiple sources, applying rules that lived in people's heads and scattered spreadsheets, then reconciling the mismatches that inevitably surfaced. It ate days of analyst time, invited errors into numbers that moved real money, and made a simple question hard to answer: <em>why is this seller owed exactly this amount?</em></p>
+    </section>
+
+    <section class="cs-block">
+      <h2>The approach</h2>
+      <p>Instead of automating a broken process, I rebuilt the logic first — then automated the parts that no longer needed a human:</p>
+      <ul class="cs-list">
+        <li><strong>Re-engineered the rebate logic</strong> — codified scattered, tribal rules into one consistent, documented engine, so every payout traced back to a clear rule.</li>
+        <li><strong>Automated the data pipeline</strong> — replaced manual pulls and copy-paste with an automated flow from source data to computed output. [name the tool: SQL views / VBA macro / Python script]</li>
+        <li><strong>Built reconciliation checks</strong> — validation flags catch mismatches automatically, surfacing exceptions instead of letting them slip through to payout.</li>
+        <li><strong>Standardized the workflow</strong> — one repeatable process the team could run in minutes, not days, with output formatted for downstream sign-off. [add any governance / approval step]</li>
+      </ul>
+    </section>
+
+    <blockquote class="cs-quote">
+      &ldquo;[Optional real quote — e.g. a teammate or manager on the time saved or the new reliability. Keep it specific. Delete this block if you don't have one.]&rdquo;
+    </blockquote>
+
+    <section class="cs-block">
+      <h2>The outcome</h2>
+      <p>What had taken days of manual work now runs in a fraction of the time, with far less room for error. The rebate logic is documented and auditable, so payouts can be explained and defended on the spot. The redesigned process became the standard the team relies on each cycle.</p>
+      <div class="cs-metrics">
+        <div class="cs-metric"><strong>80%</strong><span>less manual effort</span></div>
+        <div class="cs-metric"><strong>[X days → Y]</strong><span>faster cycle time</span></div>
+        <div class="cs-metric"><strong>Auditable</strong><span>every payout traces to a rule</span></div>
+      </div>
+    </section>
+
+    <section class="cs-block">
+      <h2>Reflection</h2>
+      <p>The lesson that stuck: automation only sticks when the logic is right first. The win wasn't the script — it was untangling the rules so the system could be trusted. Automating a process you don't fully understand just makes the wrong answer arrive faster.</p>
+    </section>
+
+    <a class="cs-next" href="index.html#projects">View more projects →</a>
+  </article>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <h2>Let's work together.</h2>
+      <a class="footer__mail" href="mailto:lim.josh.f0518@gmail.com">lim.josh.f0518@gmail.com</a>
+      <p class="footer__copy">© <span id="year"></span> Josh F. Lim.</p>
+    </div>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

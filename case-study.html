@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Study — Commercial Analytics Dashboard Suite</title>
+  <meta name="description" content="Case study: a suite of automated dashboards that became the cluster's source of truth at Shopee." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="case-study.css" />
+</head>
+<body>
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__brand">Josh&nbsp;F.&nbsp;Lim</a>
+      <nav class="nav__links">
+        <a href="index.html#about">About</a>
+        <a href="index.html#experience">Experience</a>
+        <a href="index.html#projects">Projects</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="cs-hero">
+    <div class="container">
+      <a class="cs-back" href="index.html#projects">← Back to projects</a>
+      <span class="kicker">Case Study · Data &amp; Analytics</span>
+      <h1>Commercial Analytics Dashboard Suite</h1>
+      <p class="cs-hero__sub">A set of automated dashboards that turned slow, manual reporting into a real-time source of truth — adopted across the cluster for weekly reviews and forecasting.</p>
+    </div>
+  </section>
+
+  <section class="cs-meta">
+    <div class="container cs-meta__grid">
+      <div><span>Role</span><p>Category Mgmt Analytics Associate</p></div>
+      <div><span>Context</span><p>Shopee Philippines</p></div>
+      <div><span>Stack</span><p>SQL · Excel · Power BI</p></div>
+      <div><span>Impact</span><p>100% trend accuracy (Jan–Apr)</p></div>
+    </div>
+  </section>
+
+  <article class="cs-body container">
+
+    <div class="cs-figure cs-figure--lead"></div>
+
+    <section class="cs-block">
+      <h2>The problem</h2>
+      <p>Category teams were flying partly blind. Reporting was manual and slow, and there was no granular, real-time view of what actually drove GMV — down to the L2, shop, and SKU level. A leadership review surfaced a critical SKU-level visibility gap that no existing report could answer.</p>
+    </section>
+
+    <section class="cs-block">
+      <h2>The approach</h2>
+      <p>I built a connected suite of automated dashboards, each solving a specific decision the team faced:</p>
+      <ul class="cs-list">
+        <li><strong>GMV Growth Drivers</strong> — decomposed performance across L2, shop, and SKU, with out-of-stock tracking to trigger proactive replenishment.</li>
+        <li><strong>Daily Targets Tracker</strong> — real-time monitoring of target attainment, enabling timely mid-month interventions.</li>
+        <li><strong>Cluster-wide SOB &amp; Incremental GMV trackers</strong> — standardized share-of-business and campaign-uplift reporting across business units.</li>
+        <li><strong>HL Trend Calendar</strong> — a seasonality model to forecast top-performing categories ahead of each month.</li>
+      </ul>
+    </section>
+
+    <blockquote class="cs-quote">
+      “The trackers became the primary tool for weekly alignment — and the one we reached for when leadership asked a question no report could yet answer.”
+    </blockquote>
+
+    <section class="cs-block">
+      <h2>The outcome</h2>
+      <p>The suite cut time-to-insight dramatically and became embedded in recurring business reviews. The SKU-level tracker built during the leadership review is now a standing report. Correcting computation inconsistencies across clusters also improved overall data accuracy and reporting consistency.</p>
+      <div class="cs-metrics">
+        <div class="cs-metric"><strong>100%</strong><span>trend-forecast accuracy (Jan–Apr)</span></div>
+        <div class="cs-metric"><strong>Cluster-wide</strong><span>adoption in weekly reviews</span></div>
+        <div class="cs-metric"><strong>Real-time</strong><span>vs. manual reporting</span></div>
+      </div>
+    </section>
+
+    <section class="cs-block">
+      <h2>Reflection</h2>
+      <p>The lesson that stuck: a dashboard only matters if it changes a decision. The trackers that succeeded were the ones built around a specific question someone needed answered that week — not the ones that simply looked complete.</p>
+    </section>
+
+    <a class="cs-next" href="index.html#projects">View more projects →</a>
+  </article>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <h2>Let's work together.</h2>
+      <a class="footer__mail" href="mailto:lim.josh.f0518@gmail.com">lim.josh.f0518@gmail.com</a>
+      <p class="footer__copy">© <span id="year"></span> Josh F. Lim.</p>
+    </div>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

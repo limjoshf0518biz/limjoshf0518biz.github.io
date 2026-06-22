@@ -1,0 +1,10 @@
+_serve.py
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+assets/ai-agent/SeaTalk_*
+assets/ai-agent/wrong 1.jpeg
+assets/ai-agent/wrong 2.jpeg
+assets/ai-agent/wrong 3.jpeg
+assets/ai-agent/wrong1final.jpeg

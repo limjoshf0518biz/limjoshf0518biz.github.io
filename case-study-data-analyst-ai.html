@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Study — Data Analyst AI Agent</title>
+  <meta name="description" content="A natural-language data analyst agent on Google BigQuery. The first version was confidently wrong. A clean data foundation and a strict set of guardrails made it trustworthy." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="case-study.css" />
+
+  <style>
+    .cs-thesis { font-family: var(--serif); font-size: clamp(1.2rem, 2.6vw, 1.5rem); color: var(--navy); line-height: 1.45; margin: 0 0 clamp(28px, 4vw, 40px); }
+    .cs-block { margin-bottom: 30px; }
+    .cs-block p { margin-bottom: 16px; line-height: 1.65; } .cs-block p:last-child { margin-bottom: 0; }
+    .cs-block h2 { margin-top: 6px; }
+
+    .cs-tier { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 22px 0; align-items: stretch; }
+    .cs-tier-card { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 18px; display: flex; flex-direction: column; }
+    .cs-tier-card span { display: block; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.62rem; color: var(--blue); font-weight: 600; margin-bottom: 8px; }
+    .cs-tier-card h4 { color: var(--navy); font-size: 1.02rem; margin: 0 0 8px; }
+    .cs-tier-card p { font-size: 0.9rem; color: var(--ink); margin: 0; line-height: 1.55; }
+
+    .cs-table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 0.9rem; }
+    .cs-table th, .cs-table td { text-align: left; padding: 10px 11px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .cs-table th { color: var(--navy); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.09em; }
+    .cs-table td.match { color: #1A7F5A; font-weight: 700; }
+    .fm-table td:first-child { color: #B23A48; font-weight: 600; width: 42%; }
+    .fm-table td:last-child { color: var(--ink); }
+
+    .cs-callout { background: var(--paper); border-left: 3px solid var(--blue); padding: 16px 22px; margin: 22px 0; border-radius: 0 4px 4px 0; }
+    .cs-callout p { font-size: 1rem; color: var(--ink); margin: 0; }
+
+    .cs-figure-cap { text-align: center; color: var(--grey); font-size: 0.82rem; margin: 10px auto 0; max-width: 620px; }
+    .cs-foot { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--grey); font-size: 0.82rem; }
+
+    .cs-code { margin-top: 18px; }
+    .cs-code summary { cursor: pointer; color: var(--navy); font-weight: 600; font-size: 0.98rem; list-style: none; }
+    .cs-code summary::before { content: "\25B8 "; color: var(--blue); } .cs-code[open] summary::before { content: "\25BE "; }
+    .cs-code pre { background: var(--navy); color: #E8E8F0; border-radius: 6px; padding: 22px; overflow-x: auto; font-size: 0.75rem; line-height: 1.5; margin-top: 14px; white-space: pre-wrap; }
+    .cs-code pre.sql { white-space: pre; }
+    .cs-code .kw { color: #8FB7FF; } .cs-code .lbl { color: #C9A6FF; font-weight: 700; }
+
+    .schema { margin: 24px auto 6px; max-width: 760px; }
+    .schema svg { width: 100%; height: auto; display: block; }
+
+    .flow-fig { margin: 22px 0 6px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--paper); }
+    .flow-fig img { width: 100%; height: auto; display: block; }
+
+    /* chat */
+    .chat-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 22px 0 6px; }
+    .chat { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+    .chat--single { max-width: 560px; margin: 22px auto 6px; }
+    .chat__head { padding: 11px 16px; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; }
+    .chat__head small { display: block; font-weight: 500; font-size: 0.68rem; opacity: 0.85; margin-top: 2px; letter-spacing: 0; }
+    .chat--naive .chat__head { background: #FBEDED; color: #B23A48; border-bottom: 1px solid #F0D6D6; }
+    .chat--hard .chat__head { background: #E9F3EE; color: #1A7F5A; border-bottom: 1px solid #D4E8DC; }
+    .chat--plain .chat__head { background: var(--navy); color: #fff; }
+    .chat__body { padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .bubble { max-width: 88%; padding: 9px 13px; border-radius: 12px; font-size: 0.86rem; line-height: 1.45; }
+    .bubble--user { align-self: flex-end; background: var(--navy); color: #fff; border-bottom-right-radius: 3px; }
+    .bubble--bot { align-self: flex-start; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-bottom-left-radius: 3px; }
+    .bubble--bot .verdict { display: inline-block; margin-top: 6px; font-size: 0.72rem; font-weight: 700; }
+    .chat--naive .verdict { color: #B23A48; } .chat--hard .verdict { color: #1A7F5A; }
+    .bubble .sqlrun { display:block; margin:6px 0; padding:7px 9px; background:var(--navy); color:#cfe0ff; border-radius:6px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:0.74rem; line-height:1.4; white-space:pre-wrap; }
+    .bubble .sqlnote { display:block; margin-top:6px; font-size:0.74rem; color: var(--grey); }
+
+    /* focused guardrails */
+    .gr-list { list-style: none; margin: 20px 0; padding: 0; display: grid; gap: 12px; }
+    .gr-list li { background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--blue); border-radius: 0 5px 5px 0; padding: 14px 18px; }
+    .gr-list h4 { margin: 0 0 4px; color: var(--navy); font-size: 0.98rem; }
+    .gr-list p { margin: 0; font-size: 0.9rem; color: var(--ink); line-height: 1.55; }
+    .gr-list code { background: rgba(0,0,51,0.06); padding: 1px 5px; border-radius: 3px; font-size: 0.86em; }
+
+    /* Telegram-style chat + carousel */
+    .tgc { position: relative; left: 50%; transform: translateX(-50%); width: min(1180px, 95vw); margin: 22px 0 6px; }
+    .tgc__slide { display: none; } .tgc__slide.active { display: block; }
+    /* 4-column comparison: wrong SQL | wrong img | correct img | correct SQL */
+    .tg4 { display: grid; grid-template-columns: 1fr 0.85fr 0.85fr 1fr; gap: 16px; align-items: start; }
+    .tg4 > div { min-width: 0; display: flex; flex-direction: column; }
+    .tg4 .tg-lbl { min-height: 1.1em; }
+    .tg4 .tg-shot { width: 100%; height: 340px; object-fit: contain; background: #0e1621; border: 1px solid var(--line); border-radius: 10px; display: block; }
+    @media (max-width: 1000px) { .tg4 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .tg4 { grid-template-columns: 1fr; } .tg4 .tg-shot { height: auto; max-width: 360px; } }
+    .tg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+    .tg-lbl { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 7px; }
+    .tg-lbl.bad { color: #B23A48; } .tg-lbl.good { color: #1A7F5A; }
+    .tg { background: #0e1621; border: 1px solid #1c2a39; border-radius: 12px; padding: 12px 12px 14px; }
+    .tg__hdr { display: flex; align-items: center; gap: 9px; padding: 2px 2px 11px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 11px; }
+    .tg__av { width: 30px; height: 30px; border-radius: 50%; background: #5aa9e6; color: #fff; display: grid; place-items: center; font-size: 0.64rem; font-weight: 700; flex: none; }
+    .tg--bad .tg__av { background: #c0506a; }
+    .tg__name { color: #fff; font-weight: 700; font-size: 0.82rem; line-height: 1.15; }
+    .tg__sub { color: #7d8e9e; font-size: 0.68rem; }
+    .tg__msgs { display: flex; flex-direction: column; gap: 8px; }
+    .tg-msg { max-width: 90%; padding: 8px 11px; font-size: 0.82rem; line-height: 1.45; border-radius: 12px; white-space: pre-line; }
+    .tg-in { background: #182533; color: #e7eef5; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .tg-out { background: #2b5278; color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .tg-msg b { color: #fff; font-weight: 700; }
+    .tg-sql { background: #0e0e38; border: 1px solid #23235c; border-radius: 12px; padding: 14px 14px; font-family: ui-monospace,Menlo,Consolas,monospace; font-size: 0.66rem; line-height: 1.5; color: #cfe0ff; white-space: pre-wrap; overflow-wrap: break-word; }
+    .tg-sql .kw { color: #8FB7FF; } .tg-sql .res { color: #7ee0a8; font-weight: 700; }
+    /* 3-column proof slide: wrong | real screenshot | SQL */
+    .tg3 { display: grid; grid-template-columns: 1fr 0.82fr 1fr; gap: 14px; align-items: start; }
+    .tg3 > div { min-width: 0; }
+    .tg-shot { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--line); }
+    .tg-lbl.real { color: var(--navy); }
+    @media (max-width: 820px) { .tg3 { grid-template-columns: 1fr; } .tg3 .tg-shot { max-width: 360px; } }
+    .tgc__nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 12px; }
+    .tgc__nav button { background: var(--navy); color: #fff; border: none; border-radius: 4px; width: 38px; height: 34px; cursor: pointer; font-size: 1.05rem; line-height: 1; }
+    .tgc__nav button:hover { background: #15155f; }
+    .tgc__count { color: var(--grey); font-size: 0.82rem; min-width: 54px; text-align: center; }
+    .tgc__cap { text-align: center; color: var(--grey); font-size: 0.82rem; margin: 12px auto 0; max-width: 600px; }
+
+    @media (max-width: 760px) { .cs-tier { grid-template-columns: 1fr; } .chat-cols, .tg-grid { grid-template-columns: 1fr; } .fm-table td:first-child { width: auto; } }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__brand">Josh&nbsp;F.&nbsp;Lim</a>
+      <nav class="nav__links">
+        <a href="index.html#about">About</a>
+        <a href="index.html#experience">Experience</a>
+        <a href="index.html#projects">Projects</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="cs-hero" style="background-image: linear-gradient(to right, rgba(0,0,51,0.94), rgba(0,0,51,0.6)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&amp;fit=crop&amp;w=1600&amp;q=80'); background-size: cover; background-position: center;">
+    <div class="container">
+      <a class="cs-back" href="index.html#projects">← Back to projects</a>
+      <span class="kicker">Case Study · Analytics Engineering</span>
+      <h1>My first AI analyst was confidently wrong</h1>
+      <p class="cs-hero__sub">I built a chatbot that answers business questions over a Google BigQuery warehouse. The first version looked impressive and gave wrong numbers. Here is how a clean data foundation and strict guardrails made it trustworthy.</p>
+    </div>
+  </section>
+
+  <section class="cs-meta">
+    <div class="container cs-meta__grid">
+      <div><span>Role</span><p>Analytics Engineer</p></div>
+      <div><span>Context</span><p>E-commerce Analytics</p></div>
+      <div><span>Stack</span><p>Google BigQuery · SQL · n8n · LLM</p></div>
+      <div><span>Impact</span><p>Trustworthy self-service data agent</p></div>
+    </div>
+  </section>
+
+  <article class="cs-body container">
+
+    <p class="cs-thesis">An AI that answers questions over your data is only as good as the data and the rules behind it. The fix here was not a smarter model. It was a clean foundation and a strict set of guardrails.</p>
+
+    <section class="cs-block">
+      <h2>The first version, and why it failed</h2>
+      <p>I started the easy way. I pointed a language model at the raw warehouse and let it write its own SQL. It demoed well. Then I checked the numbers.</p>
+      <p>They were wrong. The model guessed which tables to join. It double-counted rows. It did arithmetic in its head. And it never said it was unsure. That is the real danger with an AI analyst. It does not refuse. It answers fluently and gets it wrong — and the sentence around the number reads perfectly, so no one notices.</p>
+    </section>
+
+    <section class="cs-block">
+      <h2>The fix, in three moves</h2>
+      <p>I treated this as a data problem first and a model problem second. Three moves turned a flaky demo into something you can rely on.</p>
+
+      <div class="cs-tier">
+        <div class="cs-tier-card">
+          <span>1 · Consolidate</span>
+          <h4>One clean view</h4>
+          <p>Join the five raw tables into a single Google BigQuery view. The agent reads one clean table instead of guessing joins.</p>
+        </div>
+        <div class="cs-tier-card">
+          <span>2 · Guardrails</span>
+          <h4>Strict rules</h4>
+          <p>One read-only view. Show the SQL it runs. Do every calculation in SQL. Ask when a question is unclear.</p>
+        </div>
+        <div class="cs-tier-card">
+          <span>3 · Orchestrate</span>
+          <h4>One workflow</h4>
+          <p>A chat comes in, the agent writes and runs a query, the answer goes back. Memory lets you ask follow-up questions.</p>
+        </div>
+      </div>
+
+      <h2 style="font-size:1.25rem; margin-top:34px;">Move 1 — One clean view</h2>
+      <p>The most effective fix happened before the model ever ran. Instead of asking the agent to find its way through five tables, I joined them once into a single view. Now a question is a query against one table at a known grain. One row is one order line item.</p>
+
+      <figure class="schema">
+        <svg viewBox="0 0 800 304" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Star schema: order_items_info in the center, linked by primary and foreign keys"><style>.er-box{fill:#0e0e38;stroke:#23235c;stroke-width:1;}.er-hd{fill:#17174a;}.er-title{fill:#fff;font-family:var(--sans);font-weight:700;font-size:11px;}.er-n{fill:#c7cdda;font-family:var(--sans);font-size:9px;}.er-t{fill:#7f879b;font-family:var(--sans);font-size:8.5px;}.er-div{stroke:#23235c;stroke-width:1;}</style><path d="M310 173.5 H265 V203.5 H214" fill="none" stroke="#E8943A" stroke-width="2"/><circle cx="214" cy="203.5" r="3.2" fill="#E8943A"/><polygon points="310,173.5 303,169.5 303,177.5" fill="#E8943A"/><path d="M500 211.5 H545 V57.5 H596" fill="none" stroke="#6BA4E0" stroke-width="2"/><circle cx="596" cy="57.5" r="3.2" fill="#6BA4E0"/><polygon points="500,211.5 507,207.5 507,215.5" fill="#6BA4E0"/><path d="M24 57.5 H8 V222.5 H24" fill="none" stroke="#5FB58A" stroke-width="2"/><circle cx="24" cy="57.5" r="3.2" fill="#5FB58A"/><polygon points="24,222.5 17,218.5 17,226.5" fill="#5FB58A"/><path d="M596 203.5 H580 V76.5 H596" fill="none" stroke="#B58AD6" stroke-width="2"/><circle cx="596" cy="203.5" r="3.2" fill="#B58AD6"/><polygon points="596,76.5 589,72.5 589,80.5" fill="#B58AD6"/><rect class="er-box" x="24" y="24" width="190" height="119" rx="6"/><path class="er-hd" d="M24 48 V30 Q24 24 30 24 H208 Q214 24 214 30 V48 Z"/><text class="er-title" x="119" y="40" text-anchor="middle">customer_info</text><text fill="#5FB58A" font-weight="700" x="35" y="60.5" font-family="var(--sans)" font-size="9px">customer_id</text><text class="er-t" x="203" y="60.5" text-anchor="end">STRING</text><line class="er-div" x1="24" y1="67" x2="214" y2="67"/><text class="er-n" x="35" y="79.5" font-family="var(--sans)" font-size="9px">customer_unique_id</text><text class="er-t" x="203" y="79.5" text-anchor="end">STRING</text><line class="er-div" x1="24" y1="86" x2="214" y2="86"/><text class="er-n" x="35" y="98.5" font-family="var(--sans)" font-size="9px">customer_city</text><text class="er-t" x="203" y="98.5" text-anchor="end">STRING</text><line class="er-div" x1="24" y1="105" x2="214" y2="105"/><text class="er-n" x="35" y="117.5" font-family="var(--sans)" font-size="9px">customer_state</text><text class="er-t" x="203" y="117.5" text-anchor="end">STRING</text><line class="er-div" x1="24" y1="124" x2="214" y2="124"/><text class="er-n" x="35" y="136.5" font-family="var(--sans)" font-size="9px">zip</text><text class="er-t" x="203" y="136.5" text-anchor="end">INT</text><rect class="er-box" x="596" y="24" width="190" height="62" rx="6"/><path class="er-hd" d="M596 48 V30 Q596 24 602 24 H780 Q786 24 786 30 V48 Z"/><text class="er-title" x="691" y="40" text-anchor="middle">product_info</text><text fill="#6BA4E0" font-weight="700" x="607" y="60.5" font-family="var(--sans)" font-size="9px">product_id</text><text class="er-t" x="775" y="60.5" text-anchor="end">STRING</text><line class="er-div" x1="596" y1="67" x2="786" y2="67"/><text fill="#B58AD6" font-weight="700" x="607" y="79.5" font-family="var(--sans)" font-size="9px">product_category_name</text><text class="er-t" x="775" y="79.5" text-anchor="end">STRING</text><rect class="er-box" x="24" y="170" width="190" height="119" rx="6"/><path class="er-hd" d="M24 194 V176 Q24 170 30 170 H208 Q214 170 214 176 V194 Z"/><text class="er-title" x="119" y="186" text-anchor="middle">order_transaction</text><text fill="#E8943A" font-weight="700" x="35" y="206.5" font-family="var(--sans)" font-size="9px">order_id</text><text class="er-t" x="203" y="206.5" text-anchor="end">STRING</text><line class="er-div" x1="24" y1="213" x2="214" y2="213"/><text fill="#5FB58A" font-weight="700" x="35" y="225.5" font-family="var(--sans)" font-size="9px">customer_id</text><text class="er-t" x="203" y="225.5" text-anchor="end">STRING</text><line class="er-div" x1="24" y1="232" x2="214" y2="232"/><text class="er-n" x="35" y="244.5" font-family="var(--sans)" font-size="9px">order_status</text><text class="er-t" x="203" y="244.5" text-anchor="end">STRING</text><line class="er-div" x1="24" y1="251" x2="214" y2="251"/><text class="er-n" x="35" y="263.5" font-family="var(--sans)" font-size="9px">purchase_time</text><text class="er-t" x="203" y="263.5" text-anchor="end">TIMESTAMP</text><line class="er-div" x1="24" y1="270" x2="214" y2="270"/><text class="er-n" x="35" y="282.5" font-family="var(--sans)" font-size="9px">delivered_date</text><text class="er-t" x="203" y="282.5" text-anchor="end">TIMESTAMP</text><rect class="er-box" x="596" y="170" width="190" height="81" rx="6"/><path class="er-hd" d="M596 194 V176 Q596 170 602 170 H780 Q786 170 786 176 V194 Z"/><text class="er-title" x="691" y="186" text-anchor="middle">category_map</text><text fill="#B58AD6" font-weight="700" x="607" y="206.5" font-family="var(--sans)" font-size="9px">product_category_name</text><text class="er-t" x="775" y="206.5" text-anchor="end">STRING</text><line class="er-div" x1="596" y1="213" x2="786" y2="213"/><text class="er-n" x="607" y="225.5" font-family="var(--sans)" font-size="9px">L1</text><text class="er-t" x="775" y="225.5" text-anchor="end">STRING</text><line class="er-div" x1="596" y1="232" x2="786" y2="232"/><text class="er-n" x="607" y="244.5" font-family="var(--sans)" font-size="9px">L2</text><text class="er-t" x="775" y="244.5" text-anchor="end">STRING</text><rect class="er-box" x="310" y="140" width="190" height="138" rx="6"/><path class="er-hd" d="M310 164 V146 Q310 140 316 140 H494 Q500 140 500 146 V164 Z"/><text class="er-title" x="405" y="156" text-anchor="middle">order_items_info</text><text fill="#E8943A" font-weight="700" x="321" y="176.5" font-family="var(--sans)" font-size="9px">order_id</text><text class="er-t" x="489" y="176.5" text-anchor="end">STRING</text><line class="er-div" x1="310" y1="183" x2="500" y2="183"/><text class="er-n" x="321" y="195.5" font-family="var(--sans)" font-size="9px">order_item_id</text><text class="er-t" x="489" y="195.5" text-anchor="end">INT</text><line class="er-div" x1="310" y1="202" x2="500" y2="202"/><text fill="#6BA4E0" font-weight="700" x="321" y="214.5" font-family="var(--sans)" font-size="9px">product_id</text><text class="er-t" x="489" y="214.5" text-anchor="end">STRING</text><line class="er-div" x1="310" y1="221" x2="500" y2="221"/><text class="er-n" x="321" y="233.5" font-family="var(--sans)" font-size="9px">seller_id</text><text class="er-t" x="489" y="233.5" text-anchor="end">STRING</text><line class="er-div" x1="310" y1="240" x2="500" y2="240"/><text class="er-n" x="321" y="252.5" font-family="var(--sans)" font-size="9px">price</text><text class="er-t" x="489" y="252.5" text-anchor="end">FLOAT</text><line class="er-div" x1="310" y1="259" x2="500" y2="259"/><text class="er-n" x="321" y="271.5" font-family="var(--sans)" font-size="9px">freight_value</text><text class="er-t" x="489" y="271.5" text-anchor="end">FLOAT</text></svg>
+        <figcaption class="cs-figure-cap">The star schema behind the consolidated view. Each colored arrow runs from a primary key to the foreign key that references it — the joins that build one clean table.</figcaption>
+      </figure>
+
+      <details class="cs-code">
+        <summary>The consolidation view (Google BigQuery SQL)</summary>
+        <pre class="sql"><span class="kw">SELECT</span>
+  oi.order_id,
+  oi.product_id,
+  t.L1 <span class="kw">AS</span> L1,
+  t.L2 <span class="kw">AS</span> L2,
+  oi.seller_id,
+  c.customer_unique_id,
+  c.customer_city  <span class="kw">AS</span> city,
+  c.customer_state <span class="kw">AS</span> state,
+  c.customer_zip_code_prefix <span class="kw">AS</span> zip,
+  ot.order_status  <span class="kw">AS</span> order_status,
+  ot.order_purchase_timestamp <span class="kw">AS</span> purchase_time,
+  ot.order_delivered_carrier_date  <span class="kw">AS</span> delivered_to_carrier_on,
+  ot.order_delivered_customer_date <span class="kw">AS</span> delivered_to_customer_on,
+  ot.order_estimated_delivery_date <span class="kw">AS</span> eta,
+  oi.price,
+  oi.freight_value <span class="kw">AS</span> shipping_fee
+<span class="kw">FROM</span> `olist-data-499303.analytics.order_items_info` <span class="kw">AS</span> oi
+<span class="kw">LEFT JOIN</span> `olist-data-499303.analytics.order_transaction` <span class="kw">AS</span> ot
+  <span class="kw">ON</span> oi.order_id = ot.order_id
+<span class="kw">LEFT JOIN</span> `olist-data-499303.analytics.customer_info` <span class="kw">AS</span> c
+  <span class="kw">ON</span> ot.customer_id = c.customer_id
+<span class="kw">LEFT JOIN</span> `olist-data-499303.analytics.product_info` <span class="kw">AS</span> i
+  <span class="kw">ON</span> oi.product_id = i.product_id
+<span class="kw">LEFT JOIN</span> `olist-data-499303.analytics.category_map` <span class="kw">AS</span> t
+  <span class="kw">ON</span> i.product_category_name = t.product_category_name</pre>
+      </details>
+
+      <h2 style="font-size:1.25rem; margin-top:34px;">Move 3 — One workflow</h2>
+      <p>The whole agent runs in a single n8n workflow. A chat message comes in. The agent picks the metric, writes the SQL, and runs it against BigQuery. Then it sends the answer back. Memory keeps the conversation so you can ask follow-up questions.</p>
+
+      <figure class="flow-fig">
+        <img src="assets/ai-agent/flow.png" alt="n8n workflow: a chat message triggers an agent that writes and runs a BigQuery query, then replies" />
+      </figure>
+      <p class="cs-figure-cap">The agent flow in n8n. A message triggers the agent, which writes and runs a query, then replies. Memory carries the conversation for follow-ups.</p>
+    </section>
+
+    <section class="cs-block">
+      <h2>What I had to teach it</h2>
+      <p>Most of the work was not code. It was writing down the judgment a good analyst uses without thinking. Five rules did the heavy lifting.</p>
+
+      <ul class="gr-list">
+        <li>
+          <h4>One fixed formula per metric</h4>
+          <p>Each metric has a single SQL definition so the model never invents its own: revenue = <code>SUM(price)</code>, orders = <code>COUNT(DISTINCT order_id)</code>, customers = <code>COUNT(DISTINCT customer_unique_id)</code>, items = <code>COUNT(*)</code>, ADG = revenue ÷ calendar days. Pre-computing these in SQL removes the confusion.</p>
+        </li>
+        <li>
+          <h4>Compute in SQL, never in its head</h4>
+          <p>The most important rule. Every number in an answer must come from a column the query returned. The model may not work out a growth %, a day count, or a delta on its own. If a number is not in the result, it does not get said.</p>
+        </li>
+        <li>
+          <h4>Fair comparison on ADG</h4>
+          <p>Periods of different length are not comparable on raw totals. Convert each to Average Daily GMV — revenue ÷ the calendar days in the period, counting every day, not just days with sales — and compare on that. Flag that 2016 and 2018 are partial.</p>
+        </li>
+        <li>
+          <h4>Location: city vs state</h4>
+          <p>"SP" is a two-letter state code; "São Paulo" is a city. The model matches the right column and says which one it used, so a city never gets read as a whole state.</p>
+        </li>
+        <li>
+          <h4>Refuse what the data can't answer</h4>
+          <p>If a question needs data that isn't there — profit margin needs cost of goods, which this dataset does not have — the model says so instead of inventing a number. A useful "I can't" beats a confident wrong answer.</p>
+        </li>
+      </ul>
+
+      <details class="cs-code">
+        <summary>The guardrail prompt (abbreviated — all sections)</summary>
+        <pre><span class="lbl">ROLE</span>
+Precise data analyst. For ANY data question, query BigQuery with the SQL
+tool — never answer from memory. Run a query, answer from its result.
+
+<span class="lbl">DATA SOURCE</span>
+Query ONLY analytics.consolidated. Grain: one row = one order line item.
+
+<span class="lbl">COLUMNS</span>
+order_id, product_id, seller_id, customer_unique_id, L1/L2 (category),
+city, state, zip, order_status, purchase_time, delivery dates, price,
+shipping_fee. customer_unique_id is the real customer across orders.
+
+<span class="lbl">DATE RANGE</span>
+Sept 2016 – Sept 2018. 2016 and 2018 are PARTIAL — flag on totals / YoY.
+
+<span class="lbl">BUSINESS RULES</span>
+- COMPUTE IN SQL, NEVER IN YOUR HEAD. Every number comes from a query column.
+- Default revenue = SUM(price), all statuses. Cancellations = 'canceled'.
+- User instructions override defaults; add one caveat if it distorts.
+
+<span class="lbl">METRICS (one fixed formula each)</span>
+revenue = SUM(price) · orders = COUNT(DISTINCT order_id)
+customers = COUNT(DISTINCT customer_unique_id) · items = COUNT(*)
+AOV = SUM(price)/COUNT(DISTINCT order_id) · avg price = AVG(price)
+ADG = SUM(price) / DATE_DIFF(end, start, DAY)+1 (every calendar day)
+delivery days = TIMESTAMP_DIFF(delivered, purchase, DAY)
+
+<span class="lbl">FAIR COMPARISON</span>
+Different-length periods are not comparable on raw totals. Compare on ADG,
+computed in SQL; cap the partial period's end at the last date in the data.
+
+<span class="lbl">LOCATION &amp; CATEGORY</span>
+state = 2-letter code; city = city name; say which you matched. Broad term
+→ L1, specific → L2; exclude NULL categories from rankings.
+
+<span class="lbl">DRIVERS / GROWTH</span>
+Break the change down by the asked dimension, rank by delta, name the vital
+few (Pareto). Aggregate by month/year; report % change computed in SQL.
+
+<span class="lbl">ANSWERING</span>
+Lead with the key number. State assumptions (period, status, ADG vs totals,
+partial year). Plain text, money with $.
+
+<span class="lbl">SCOPE</span>
+If it is not answerable from this table, say so — do not guess.</pre>
+      </details>
+    </section>
+
+    <section class="cs-block">
+      <h2>Proof: Before and After</h2>
+      <p>Every answer shows its work — the agent returns the SQL behind the number, so you can audit it in seconds. And memory carries the conversation, so you can drill down. The slides below are the real agent, in Telegram.</p>
+
+      <div class="tgc" id="tgc">
+        <div class="tgc__stage" id="tgc-stage">
+
+          <!-- Slide 1: orders -->
+          <div class="tgc__slide active">
+            <div class="tg4">
+              <div>
+                <p class="tg-lbl bad">✕ Wrong query</p>
+                <div class="tg-sql"><span class="kw">SELECT</span> COUNT(<span class="kw">DISTINCT</span> order_id) <span class="kw">AS</span> total_orders
+<span class="kw">FROM</span> `olist-data-499303.analytics.order_transaction`
+<span class="kw">WHERE</span> EXTRACT(<span class="kw">YEAR FROM</span> order_estimated_delivery_date) = 2017
+
+<span class="res">→ 45,101   (wrong date column)</span></div>
+              </div>
+              <div>
+                <p class="tg-lbl bad">✕ Defective bot</p>
+                <img class="tg-shot" src="assets/ai-agent/wrong-orders.jpg" alt="Telegram (defective bot): 45,101 orders in 2017 — over-counted." loading="lazy" />
+              </div>
+              <div>
+                <p class="tg-lbl good">✓ Corrected bot</p>
+                <img class="tg-shot" src="assets/ai-agent/chat-orders.jpg" alt="Telegram (corrected bot): 44,579 orders in 2017, all statuses, complete year." loading="lazy" />
+              </div>
+              <div>
+                <p class="tg-lbl good">✓ Correct query</p>
+                <div class="tg-sql"><span class="kw">SELECT</span> COUNT(<span class="kw">DISTINCT</span> order_id) <span class="kw">AS</span> total_orders
+<span class="kw">FROM</span> analytics.consolidated
+<span class="kw">WHERE</span> EXTRACT(<span class="kw">YEAR FROM</span> purchase_time) = 2017
+
+<span class="res">→ 44,579</span></div>
+              </div>
+            </div>
+            <p class="tgc__cap">The defective bot filtered on the wrong date column and over-reported <strong>45,101</strong>. The corrected bot counted distinct orders by purchase date and returned the right <strong>44,579</strong> — matching the SQL.</p>
+          </div>
+
+          <!-- Slide 2: revenue comparison -->
+          <div class="tgc__slide">
+            <div class="tg4">
+              <div>
+                <p class="tg-lbl bad">✕ Wrong query</p>
+                <div class="tg-sql"><span class="kw">WITH</span> revenue_by_year <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    EXTRACT(<span class="kw">YEAR FROM</span> ot.order_purchase_timestamp) <span class="kw">AS</span> year,
+    SUM(oi.price) <span class="kw">AS</span> revenue
+  <span class="kw">FROM</span> `olist-data-499303.analytics.order_items_info` oi
+  <span class="kw">JOIN</span> `olist-data-499303.analytics.order_transaction` ot
+    <span class="kw">ON</span> oi.order_id = ot.order_id
+  <span class="kw">WHERE</span> EXTRACT(<span class="kw">YEAR FROM</span> ot.order_purchase_timestamp) <span class="kw">IN</span> (2017, 2018)
+  <span class="kw">GROUP BY</span> 1
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> revenue_by_year <span class="kw">ORDER BY</span> year
+
+<span class="res">raw totals only → reads as +20%</span></div>
+              </div>
+              <div>
+                <p class="tg-lbl bad">✕ Defective bot</p>
+                <img class="tg-shot" src="assets/ai-agent/wrong-revenue.jpg" alt="Telegram (defective bot): leads with 2018 is 20% higher than 2017 on raw totals." loading="lazy" />
+              </div>
+              <div>
+                <p class="tg-lbl good">✓ Corrected bot</p>
+                <img class="tg-shot" src="assets/ai-agent/chat-revenue.jpg" alt="Telegram (corrected bot): 78% growth on ADG, 2017 $16,865/day, 2018 $30,025/day, 2018 partial." loading="lazy" />
+              </div>
+              <div>
+                <p class="tg-lbl good">✓ Correct query</p>
+                <div class="tg-sql"><span class="kw">WITH</span> date_info <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    <span class="kw">DATE</span>('2017-01-01') <span class="kw">AS</span> start_17,
+    <span class="kw">DATE</span>('2017-12-31') <span class="kw">AS</span> end_17,
+    <span class="kw">DATE</span>('2018-01-01') <span class="kw">AS</span> start_18,
+    <span class="kw">MAX</span>(<span class="kw">DATE</span>(purchase_time)) <span class="kw">AS</span> end_18
+  <span class="kw">FROM</span> analytics.consolidated
+),
+stats <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    <span class="kw">SUM</span>(<span class="kw">CASE</span> <span class="kw">WHEN</span> <span class="kw">EXTRACT</span>(<span class="kw">YEAR</span> <span class="kw">FROM</span> purchase_time)=2017 <span class="kw">THEN</span> price <span class="kw">ELSE</span> 0 <span class="kw">END</span>) <span class="kw">AS</span> rev_17,
+    <span class="kw">SUM</span>(<span class="kw">CASE</span> <span class="kw">WHEN</span> <span class="kw">EXTRACT</span>(<span class="kw">YEAR</span> <span class="kw">FROM</span> purchase_time)=2018 <span class="kw">THEN</span> price <span class="kw">ELSE</span> 0 <span class="kw">END</span>) <span class="kw">AS</span> rev_18,
+    <span class="kw">MAX</span>(days_17) <span class="kw">AS</span> days_17,
+    <span class="kw">MAX</span>(days_18) <span class="kw">AS</span> days_18
+  <span class="kw">FROM</span> analytics.consolidated
+  <span class="kw">CROSS JOIN</span> (
+    <span class="kw">SELECT</span>
+      <span class="kw">DATE_DIFF</span>(end_17, start_17, <span class="kw">DAY</span>)+1 <span class="kw">AS</span> days_17,
+      <span class="kw">DATE_DIFF</span>(end_18, start_18, <span class="kw">DAY</span>)+1 <span class="kw">AS</span> days_18
+    <span class="kw">FROM</span> date_info
+  )
+)
+<span class="kw">SELECT</span>
+  adg_17, adg_18, days_17, days_18,
+  (adg_18/adg_17 - 1)*100 <span class="kw">AS</span> growth_pct
+<span class="kw">FROM</span> (
+  <span class="kw">SELECT</span>
+    rev_17/days_17 <span class="kw">AS</span> adg_17,
+    rev_18/days_18 <span class="kw">AS</span> adg_18,
+    days_17, days_18
+  <span class="kw">FROM</span> stats
+)
+
+<span class="res">adg_17 $16,865 · adg_18 $30,025
+days 365 / 246 · growth_pct +78%</span></div>
+              </div>
+            </div>
+            <p class="tgc__cap">Both find the same dollars, but the defective bot leads with a misleading +20%, blind to 2018 being partial. The corrected bot normalizes to Average Daily GMV — the fair&nbsp;+78%.</p>
+          </div>
+
+          <!-- Slide 3: states -->
+          <div class="tgc__slide">
+            <div class="tg4">
+              <div>
+                <p class="tg-lbl bad">✕ Wrong query</p>
+                <div class="tg-sql"><span class="kw">SELECT</span> c.customer_state,
+  COUNT(<span class="kw">DISTINCT</span> ot.order_id) <span class="kw">AS</span> order_count
+<span class="kw">FROM</span> `olist-data-499303.analytics.order_transaction` ot
+<span class="kw">JOIN</span> `olist-data-499303.analytics.customer_info` c
+  <span class="kw">ON</span> ot.customer_id = c.customer_id
+<span class="kw">WHERE</span> ot.order_purchase_timestamp >= '2017-01-01'
+  <span class="kw">AND</span> ot.order_purchase_timestamp < '2018-01-01'
+<span class="kw">GROUP BY</span> 1 <span class="kw">ORDER BY</span> 2 <span class="kw">DESC</span> <span class="kw">LIMIT</span> 10
+
+<span class="res">counts 2017 ORDERS, not growth
+SP 17,760 · RJ 6,225 · MG 5,414</span></div>
+              </div>
+              <div>
+                <p class="tg-lbl bad">✕ Defective bot</p>
+                <img class="tg-shot" src="assets/ai-agent/wrong-states.jpg" alt="Telegram (defective bot): top states driving orders in 2017 — SP 17,760, RJ 6,225, MG 5,414 (lost the revenue-growth context)." loading="lazy" />
+              </div>
+              <div>
+                <p class="tg-lbl good">✓ Corrected bot</p>
+                <img class="tg-shot" src="assets/ai-agent/chat-states.jpg" alt="Telegram (corrected bot): São Paulo +100%, Paraná +94%, Minas Gerais +76% on ADG; then refuses to compute profit margin." loading="lazy" />
+              </div>
+              <div>
+                <p class="tg-lbl good">✓ Correct query</p>
+                <div class="tg-sql"><span class="kw">WITH</span> state_metrics <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    state,
+    <span class="kw">SUM</span>(<span class="kw">CASE</span> <span class="kw">WHEN</span> <span class="kw">EXTRACT</span>(<span class="kw">YEAR</span> <span class="kw">FROM</span> purchase_time)=2017 <span class="kw">THEN</span> price <span class="kw">ELSE</span> 0 <span class="kw">END</span>)/365 <span class="kw">AS</span> adg17,
+    <span class="kw">SUM</span>(<span class="kw">CASE</span> <span class="kw">WHEN</span> <span class="kw">EXTRACT</span>(<span class="kw">YEAR</span> <span class="kw">FROM</span> purchase_time)=2018 <span class="kw">THEN</span> price <span class="kw">ELSE</span> 0 <span class="kw">END</span>)/246 <span class="kw">AS</span> adg18
+  <span class="kw">FROM</span> analytics.consolidated
+  <span class="kw">GROUP BY</span> 1
+)
+<span class="kw">SELECT</span>
+  state, adg17, adg18,
+  adg18 - adg17 <span class="kw">AS</span> delta,
+  (adg18/<span class="kw">NULLIF</span>(adg17,0) - 1)*100 <span class="kw">AS</span> growth_pct
+<span class="kw">FROM</span> state_metrics
+<span class="kw">ORDER BY</span> delta <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> 10
+
+<span class="res">SP +100% · PR +94% · MG +76%</span></div>
+              </div>
+            </div>
+            <p class="tgc__cap">The clear failure. The defective bot lost the conversation and answered with 2017 <em>order counts</em>; the corrected bot kept the context, ranked states by revenue <em>growth</em> on ADG (Pareto), and later refused to invent a profit margin the data can't support.</p>
+          </div>
+
+        </div>
+        <div class="tgc__nav">
+          <button id="tgc-prev" aria-label="Previous">‹</button>
+          <span class="tgc__count" id="tgc-count">1 / 3</span>
+          <button id="tgc-next" aria-label="Next">›</button>
+        </div>
+      </div>
+
+      <h2 style="font-size:1.2rem; margin-top:30px;">Checked against SQL</h2>
+      <p>To trust it for real, I ran the same questions as SQL by hand and compared. When the foundation is right, they line up.</p>
+
+      <table class="cs-table">
+        <thead><tr><th>Question</th><th>Direct SQL result</th><th>Agent answer</th><th>Match</th></tr></thead>
+        <tbody>
+          <tr><td>Orders placed in 2017</td><td>44,579</td><td>44,579</td><td class="match">✓</td></tr>
+          <tr><td>2017 revenue / day (ADG)</td><td>$16,865</td><td>$16,865</td><td class="match">✓</td></tr>
+          <tr><td>2018 revenue / day (ADG)</td><td>$30,025</td><td>$30,025</td><td class="match">✓</td></tr>
+          <tr><td>Revenue growth 2017 → 2018 (ADG)</td><td>+78%</td><td>+78%</td><td class="match">✓</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="cs-block">
+      <h2>How AI did the work</h2>
+      <p>The AI plays three roles here.</p>
+      <div class="cs-tier">
+        <div class="cs-tier-card">
+          <span>Brain</span>
+          <h4>Plans and writes the query</h4>
+          <p>The model reads the question, picks the metric and timeframe, writes the SQL, and explains the answer in plain words.</p>
+        </div>
+        <div class="cs-tier-card">
+          <span>Guardrails</span>
+          <h4>Stops rogue answers</h4>
+          <p>The prompt holds the analyst rules that keep the model from guessing, double-counting, or doing math in its head.</p>
+        </div>
+        <div class="cs-tier-card">
+          <span>Memory</span>
+          <h4>Remembers the conversation</h4>
+          <p>A memory node keeps the thread, so a follow-up like "what drove it?" builds on the last answer — no need to repeat the timeframe or filters.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="cs-block">
+      <h2>Reflection</h2>
+      <p>The instinct with AI is to reach for a better prompt or a bigger model. Here the highest-leverage move was the least glamorous one. Clean the data and write down the rules. An AI analyst earns trust the same way a human one does. It shows its work and gets the basics right every time.</p>
+    </section>
+
+    <p class="cs-foot">Data note: built on a public e-commerce dataset (about 100K orders, 2016–2018) in Google BigQuery. Figures in the comparison and validation are illustrative of the foundation's effect, not a published benchmark. 2016 and 2018 are partial years.</p>
+
+    <a class="cs-next" href="index.html#projects">View more projects →</a>
+  </article>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <h2>Let's work together.</h2>
+      <a class="footer__mail" href="mailto:lim.josh.f0518@gmail.com">lim.josh.f0518@gmail.com</a>
+      <p class="footer__copy">© <span id="year"></span> Josh F. Lim.</p>
+    </div>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script>
+    (function(){
+      var slides = Array.prototype.slice.call(document.querySelectorAll('#tgc-stage .tgc__slide'));
+      if(!slides.length) return;
+      var count = document.getElementById('tgc-count'); var i = 0;
+      function show(n){ slides[i].classList.remove('active'); i = (n + slides.length) % slides.length; slides[i].classList.add('active'); count.textContent = (i+1) + ' / ' + slides.length; }
+      document.getElementById('tgc-prev').onclick = function(){ show(i-1); };
+      document.getElementById('tgc-next').onclick = function(){ show(i+1); };
+    })();
+  </script>
+</body>
+</html>
